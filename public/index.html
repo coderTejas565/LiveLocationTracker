@@ -15,11 +15,17 @@
     <h1>Live Location Tracker</h1>
     <div id="map"></div>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="/socket.io/socket.io.js"></script>
+
     <script>
-        var map = L.map('map').setView([51.505, -0.09], 13);
+
+        const socket = io();
+
+        const map = L.map('map').setView([51.505, -0.09], 13);
+
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(map);
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
 
     function getUserCurrentLocation() {
 
@@ -50,6 +56,7 @@
     async function main() {
         setInterval(async () => {
             const { latitude, longitude} = await getUserCurrentLocation();
+            socket.emit('client:location:update', { latitude, longitude })
             if (!myCurrentLocationMarker) {
                 myCurrentLocationMarker = L.marker([latitude, longitude])
                 .addTo(map)
