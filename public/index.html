@@ -44,6 +44,22 @@
     }
     getUserCurrentLocation().then((p) => console.log( { p } )
     )
+
+    let myCurrentLocationMarker = null;
+
+    async function main() {
+        setInterval(async () => {
+            const { latitude, longitude} = await getUserCurrentLocation();
+            if (!myCurrentLocationMarker) {
+                myCurrentLocationMarker = L.marker([latitude, longitude])
+                .addTo(map)
+                .bindPopup('You are here')
+            }else{
+                myCurrentLocationMarker.setLatLng([latitude, longitude])
+            }
+        }, 10 * 1000)
+    }
+    window.addEventListener('load', main)
     </script>
 </body>
 </html>
